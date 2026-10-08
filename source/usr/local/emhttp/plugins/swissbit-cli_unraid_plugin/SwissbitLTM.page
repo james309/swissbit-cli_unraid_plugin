@@ -1,7 +1,7 @@
-Menu="Tools"
+Menu="Tools:100"
 Title="Swissbit LTM"
-Icon="hard-drive"
-Type="xmenu"
+Icon="microchip"
+Tag="microchip"
 ---
 <div id="swissbit-ltm-output">
   <p><i class="fa fa-spinner fa-spin"></i> Querying Swissbit Life Time Monitoring data...</p>
