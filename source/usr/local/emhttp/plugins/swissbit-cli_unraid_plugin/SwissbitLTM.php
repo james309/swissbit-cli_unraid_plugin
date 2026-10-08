@@ -9,8 +9,12 @@ if (!is_executable($bin)) {
 
 // 2. Execute the LTM command directly
 // 2>&1 ensures errors (e.g. no Swissbit drive found) show up in the output array
-exec("$bin ltm 2>&1", $output, $returnCode);
+exec("$bin ltm 2>&1", $rawOutput, $returnCode);
 
+// Filter out Qt iconv warning lines
+$output = array_filter($rawOutput, function($line) {
+    return strpos($line, 'QIconvCodec') === false;
+});
 // 3. Render the output
 ?>
 <div class="panel">
