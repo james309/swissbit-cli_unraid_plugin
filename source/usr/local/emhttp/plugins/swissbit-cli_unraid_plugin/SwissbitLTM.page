@@ -2,14 +2,14 @@ Menu="Tools"
 Title="Swissbit LTM"
 Icon="hard-drive"
 ---
-<div id="swissbit-container">
-  <p><i class="fa fa-spinner fa-spin"></i> Reading Swissbit drive telemetry...</p>
+<div id="swissbit-ltm-output">
+  <p><i class="fa fa-spinner fa-spin"></i> Querying Swissbit Life Time Monitoring data...</p>
 </div>
 
 <script>
 $(function() {
-  $.get('/plugins/swissbit-cli_unraid_plugin/SwissbitLTM.php?action=scan', function(data) {
-    $('#swissbit-container').html(data);
+  $.get('/plugins/swissbit-cli_unraid_plugin/SwissbitLTM.php', function(data) {
+    $('#swissbit-ltm-output').html(data);
   });
 });
 </script>
