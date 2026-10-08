@@ -1,6 +1,7 @@
 Menu="Tools"
 Title="Swissbit LTM"
 Icon="hard-drive"
+Type="xmenu"
 ---
 <div id="swissbit-ltm-output">
   <p><i class="fa fa-spinner fa-spin"></i> Querying Swissbit Life Time Monitoring data...</p>
