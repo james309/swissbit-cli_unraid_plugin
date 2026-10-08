@@ -1,0 +1,65 @@
+<?xml version='1.0' standalone='yes'?>
+<!DOCTYPE PLUGIN [
+  <!ENTITY name        "swissbit-cli_unraid_plugin">
+  <!ENTITY author      "james309">
+  <!ENTITY version     "2026.10.08">
+  <!ENTITY launch      "">
+  <!ENTITY gitURL      "https://raw.githubusercontent.com/&author;/&name;/main">
+  <!ENTITY pluginURL   "&gitURL;/&name;.plg">
+  <!ENTITY pkgURL      "&gitURL;/packages">
+  <!ENTITY plgPATH     "/boot/config/plugins/&name;">
+  <!ENTITY plgNAME     "&name;-&version;-x86_64">
+]>
+
+<PLUGIN name="&name;" author="&author;" version="&version;" pluginURL="&pluginURL;" min="7.3.0">
+
+<CHANGES>
+###&version;
+- Initial release of Swissbit CLI wrapper
+</CHANGES>
+
+<!-- STEP 1: Verify prerequisites and prepare persistent directory -->
+<FILE Run="/bin/bash">
+<INLINE>
+# Remove older version packages stored on flash
+mkdir -p &plgPATH;
+rm -f $(ls &plgPATH;/&name;*.tar.gz 2>/dev/null | grep -v '&version;')
+</INLINE>
+</FILE>
+
+<!-- STEP 2: Download the binary tarball to flash if not already cached -->
+<FILE Name="&plgPATH;/&plgNAME;.tar.gz" Min="&version;">
+<URL>&pkgURL;/&plgNAME;.tar.gz</URL>
+</FILE>
+
+<!-- STEP 3: Install/extract binary to RAM filesystem on boot -->
+<FILE Run="/bin/bash">
+<INLINE>
+if [ -f &plgPATH;/&plgNAME;.tar.gz ]; then
+  echo "Installing &name;..."
+  
+  # Extract directly into /usr/local/bin (adjust path to match archive contents)
+  tar -xzf &plgPATH;/&plgNAME;.tar.gz -C /usr/local/bin/
+  
+  # Ensure executable permissions
+  chmod +x /usr/local/bin/sbdm-cli 2>/dev/null || true
+  
+  echo "&name; v&version; installed successfully."
+else
+  echo "Package file missing; installation aborted."
+  exit 1
+fi
+</INLINE>
+</FILE>
+
+<!-- STEP 4: Cleanup script run when the plugin is removed -->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+echo "Removing &name;..."
+rm -f /usr/local/bin/sbdm-cli
+rm -rf &plgPATH;
+echo "&name; removed."
+</INLINE>
+</FILE>
+
+</PLUGIN>
