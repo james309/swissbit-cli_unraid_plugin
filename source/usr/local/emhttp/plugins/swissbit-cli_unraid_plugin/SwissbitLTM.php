@@ -1,14 +1,29 @@
 <?php
-$docroot = $docroot ?? $_SERVER['DOCUMENT_ROOT'] ?: '/usr/local/emhttp';
-
-// Security check: ensure request is authenticated within emhttp
-if (!is_file("$docroot/state/var.ini")) exit;
-
 $bin = "/usr/local/bin/sbdm-cli";
-$action = $_GET['action'] ?? '';
 
-if ($action === 'scan') {
-    exec("$bin --list 2>&1", $out, $code);
-    echo "<pre>" . htmlspecialchars(implode("\n", $out)) . "</pre>";
+// 1. Guard against missing binary
+if (!is_executable($bin)) {
+    echo "<div class='notice error'>Binary <code>$bin</code> not found or not executable.</div>";
+    return;
 }
+
+// 2. Execute the LTM command directly
+// 2>&1 ensures errors (e.g. no Swissbit drive found) show up in the output array
+exec("$bin ltm 2>&1", $output, $returnCode);
+
+// 3. Render the output
 ?>
+<div class="panel">
+  <div class="panel-heading">
+    <b>Swissbit Life Time Monitoring (LTM) Telemetry</b>
+  </div>
+  <div class="panel-body" style="padding: 12px;">
+    <?php if ($returnCode !== 0): ?>
+      <div class="notice alert" style="margin-bottom: 10px;">
+        Command exited with code <?= $returnCode ?>. Verify a compatible Swissbit device is connected.
+      </div>
+    <?php endif; ?>
+
+    <pre style="background: #1c1c1c; color: #4af626; padding: 12px; border-radius: 4px; overflow-x: auto; font-family: monospace;"><?= htmlspecialchars(implode("\n", $output)) ?></pre>
+  </div>
+</div>
