@@ -88,6 +88,7 @@ echo "&name; plugin v&version; installed successfully."
 <INLINE>
 echo "Removing &name;..."
 rm -f /usr/local/bin/sbdm-cli
+rm -rf /usr/local/emhttp/plugins/&name;
 rm -rf &plgPATH;
 echo "&name; removed."
 </INLINE>
