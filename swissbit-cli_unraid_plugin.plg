@@ -33,23 +33,43 @@ rm -f $(ls &plgPATH;/&name;*.tar.gz 2>/dev/null | grep -v '&binVer;')
 <URL>&pkgURL;/&pkgNAME;.tar.gz</URL>
 </FILE>
 
-<!-- STEP 3: Extract binary to RAM rootfs on boot -->
+<!-- STEP 3: Extract binary to RAM rootfs on boot and verify -->
 <FILE Run="/bin/bash">
 <INLINE>
-if [ -f &plgPATH;/&pkgNAME;.tar.gz ]; then
-  echo "Installing &name; (Binary v&binVer;)..."
-  
-  # Extract directly into /usr/local/bin
-  tar -xzf &plgPATH;/&pkgNAME;.tar.gz -C /usr/local/bin/
-  
-  # Ensure executable bit is set
-  chmod +x /usr/local/bin/sbdm-cli 2>/dev/null || true
-  
-  echo "&name; plugin v&version; installed successfully."
-else
-  echo "ERROR: &pkgNAME;.tar.gz not found on flash drive."
+ARCHIVE="&plgPATH;/&pkgNAME;.tar.gz"
+TARGET="/usr/local/bin/sbdm-cli"
+
+if [ ! -f "$ARCHIVE" ]; then
+  echo "ERROR: Archive package $ARCHIVE not found on flash drive."
   exit 1
 fi
+
+echo "Installing &name; (Binary v&binVer;)..."
+
+# Extract archive directly into /usr/local/bin
+tar -xzf "$ARCHIVE" -C /usr/local/bin/
+
+# 1. Check if the binary exists at the destination
+if [ ! -f "$TARGET" ]; then
+  echo "--------------------------------------------------------"
+  echo "INSTALLATION FAILED: $TARGET does not exist after extraction!"
+  echo "Archive contents were:"
+  tar -ztvf "$ARCHIVE"
+  echo "--------------------------------------------------------"
+  exit 1
+fi
+
+# 2. Ensure executable permissions
+chmod +x "$TARGET"
+
+# 3. Check that it is actually executable
+if [ ! -x "$TARGET" ]; then
+  echo "ERROR: $TARGET exists but cannot be made executable."
+  exit 1
+fi
+
+echo "Verified: $TARGET is present and executable."
+echo "&name; plugin v&version; installed successfully."
 </INLINE>
 </FILE>
 
