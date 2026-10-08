@@ -73,6 +73,16 @@ echo "&name; plugin v&version; installed successfully."
 </INLINE>
 </FILE>
 
+<!-- Install the .page template -->
+<FILE Name="/usr/local/emhttp/plugins/&name;/SwissbitLTM.page">
+<URL>&gitURL;/source/usr/local/emhttp/plugins/&name;/SwissbitLTM.page</URL>
+</FILE>
+
+<!-- Install the backend PHP script -->
+<FILE Name="/usr/local/emhttp/plugins/&name;/SwissbitLTM.php">
+<URL>&gitURL;/source/usr/local/emhttp/plugins/&name;/SwissbitLTM.php</URL>
+</FILE>
+
 <!-- STEP 4: Removal cleanup -->
 <FILE Run="/bin/bash" Method="remove">
 <INLINE>
